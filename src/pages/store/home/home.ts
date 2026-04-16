@@ -28,22 +28,35 @@ if (usuario) {
 
 const searchInput = document.getElementById("search-input") as HTMLInputElement;
 
-// Busqueda (filtro) de productos por nombre
-searchInput.addEventListener("input", () => {
+// Filtrado de productos combinando la Categoría guardada en localStorage y la busqueda por nombre
+const aplicarFiltrosYRenderizarProductos = () => {
   const query = searchInput.value.toLowerCase();
-  const activeCategoryId = localStorage.getItem("selectedCategory");
+  const storedCategory = localStorage.getItem("selectedCategory");
+  const activeCategory: ICategory | null = storedCategory ? JSON.parse(storedCategory) : null;
 
-  // Filtrar primero por categoria si hay una seleccionada
-  let productosAMostrar = activeCategoryId 
-    ? PRODUCTS.filter(p => p.categorias.some(cat => cat.id === parseInt(activeCategoryId)))
+  // 1. Filtrar por categoría si existe
+  let productosFiltrados = activeCategory 
+    ? PRODUCTS.filter(p => p.categorias.some(cat => cat.id === activeCategory.id))
     : PRODUCTS;
 
-  const filtrados = productosAMostrar.filter(p =>
-    p.nombre.toLowerCase().includes(query)
-  );
+  // 2. Filtrar por nombre
+  if (query) {
+    productosFiltrados = productosFiltrados.filter(p =>
+      p.nombre.toLowerCase().includes(query)
+    );
+  }
 
-  renderizarProductos(filtrados);
-});
+  // 3. Actualizar titulo de la grilla de productos
+  const tituloProductos = document.getElementById("products-title") as HTMLHeadingElement;
+  if (tituloProductos) {
+    tituloProductos.textContent = activeCategory?.nombre || "Todos los Productos";
+  }
+
+  renderizarProductos(productosFiltrados);
+};
+
+// Aplicar filtro y renderizar cada vez que se escriba algo en el input de búsqueda
+searchInput.addEventListener("input", aplicarFiltrosYRenderizarProductos);
 
 // Cargar categorias
 const listaCategorias = document.getElementById("category-list") as HTMLUListElement;
@@ -52,30 +65,26 @@ const categorias: ICategory[] = getCategories();
 categorias.forEach((c) => {
   const li = document.createElement("li");
   li.classList.add("category-item");
-  li.dataset.categoryId = c.id.toString();
   li.textContent = c.nombre;
-
-  // Evento de clic para filtrar
   li.addEventListener("click", () => {
-    localStorage.setItem("selectedCategory", c.id.toString());
+    localStorage.setItem("selectedCategory", JSON.stringify(c));
+    // limpiar la búsqueda por nombre
+    searchInput.value = ""; 
     window.location.reload();
   });
-
   listaCategorias.appendChild(li);
 });
 
 // Botón para "Ver todos"
-const btnVerTodos = document.getElementById("ver-todos");
-btnVerTodos?.addEventListener("click", () => {
+document.getElementById("ver-todos")?.addEventListener("click", () => {
   localStorage.removeItem("selectedCategory");
   window.location.reload();
 });
 
-// Cargar y renderizar Productos
+// Mostrar Productos
 const renderizarProductos = (productos: Product[]) => {
   const contenedorProductos = document.getElementById('contenedor-productos');
   const contadorProductos = document.getElementById('products-count');
-
   if (!contenedorProductos || !contadorProductos) return;
 
   // limpiar por las dudas el contenedor de productos para que no se dupliquen en cada renderizado
@@ -104,11 +113,6 @@ const renderizarProductos = (productos: Product[]) => {
     contenedorProductos.appendChild(article);
   });
 };
- 
-// Primera carga: filtrar si hay una categoría seleccionada
-const initialCategoryId = localStorage.getItem("selectedCategory");
-const initialProducts = initialCategoryId 
-    ? PRODUCTS.filter(p => p.categorias.some(cat => cat.id === parseInt(initialCategoryId)))
-    : PRODUCTS;
 
-renderizarProductos(initialProducts);
+// Carga inicial
+aplicarFiltrosYRenderizarProductos();

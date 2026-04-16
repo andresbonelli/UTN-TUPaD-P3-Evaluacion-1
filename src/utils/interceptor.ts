@@ -29,7 +29,7 @@ export const interceptarCargaPagina = () => {
         return;
     }
     // Permitir a todos los usuarios autenticados acceder a la tienda
-    if (pathActual.includes("/store/") && (user.role === "admin" || user.role === "client")) {
+    if (pathActual.includes("/store/") && user.role) {
         return;
     }
     // Si intenta entrar a una ruta que no corresponde a su rol o si está en el index.html raíz pero ya autenticado
