@@ -39,4 +39,26 @@ export const actualizarContadorCarrito = () => {
   contador.textContent = totalItems.toString();
 };
 
+const toastContainer = document.createElement('div');
+toastContainer.classList.add('toast-container');
+document.body.appendChild(toastContainer);
+
+export const showToast = (titulo: string, nombre: string) => {
+  const toast = document.createElement('div');
+  toast.classList.add('toast');
+  toast.innerHTML = `
+    <div class="toast-title">${titulo}</div>
+    <div class="toast-sub">${nombre}</div>
+  `;
+  toastContainer.appendChild(toast);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => toast.classList.add('show'));
+  });
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.add('hide');
+    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+  }, 2800);
+};
+
 actualizarContadorCarrito();

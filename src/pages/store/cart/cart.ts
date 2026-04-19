@@ -1,5 +1,5 @@
-import type { CartItem } from "../../../types";
-import { actualizarContadorCarrito } from "../store";
+import type { CartItem, Product } from "../../../types";
+import { actualizarContadorCarrito, showToast } from "../store";
 
 const emptyCartButton = document.getElementById("vaciar-carrito") as HTMLButtonElement;
 
@@ -103,10 +103,12 @@ const modificarCantidad = (productId: number, cantidad: number) => {
 
 const eliminarDelCarrito = (productId: number) => {
   const cart: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
+  const productoEliminado: Product | undefined = cart.find(i => i.product.id === productId)?.product;
   const nuevoCarrito = cart.filter(i => i.product.id !== productId);
   
   localStorage.setItem("cart", JSON.stringify(nuevoCarrito));
   renderizarCarrito(nuevoCarrito);
+  showToast("¡Producto eliminado!", productoEliminado?.nombre || "");
 };
 
 const actualizarResumen = (cart: CartItem[]) => {

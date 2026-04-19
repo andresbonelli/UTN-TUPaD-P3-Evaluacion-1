@@ -1,6 +1,6 @@
 import { getCategories, PRODUCTS } from "../../../data/data";
 import type { CartItem, ICategory, Product } from "../../../types";
-import { actualizarContadorCarrito } from "../store";
+import { actualizarContadorCarrito, showToast } from "../store";
 
 const searchInput = document.getElementById("search-input") as HTMLInputElement;
 
@@ -124,7 +124,7 @@ const renderizarProductos = (productos: Product[]) => {
 
       actualizarContadorCarrito();
 
-      alert(`¡Producto "${p.nombre}" agregado al carrito!`);
+      showToast("¡Agregado al carrito!", p.nombre);
     });
   });
 };
