@@ -1,5 +1,6 @@
 import { getCategories, PRODUCTS } from "../../../data/data";
 import type { CartItem, ICategory, Product } from "../../../types";
+import { clearStoredCategory, getStoredCategory, storeCategory } from "../../../utils/localStorage";
 import { actualizarContadorCarrito, showToast } from "../store";
 
 const searchInput = document.getElementById("search-input") as HTMLInputElement;
@@ -7,8 +8,7 @@ const searchInput = document.getElementById("search-input") as HTMLInputElement;
 // Filtrado de productos combinando la Categoría guardada en localStorage y la busqueda por nombre
 const aplicarFiltrosYRenderizarProductos = () => {
   const query = searchInput.value.toLowerCase();
-  const storedCategory = localStorage.getItem("selectedCategory");
-  const activeCategory: ICategory | null = storedCategory ? JSON.parse(storedCategory) : null;
+  const activeCategory = getStoredCategory();
 
   // 1. Filtrar por categoría si existe
   let productosFiltrados = activeCategory 
@@ -43,7 +43,7 @@ categorias.forEach((c) => {
   li.classList.add("category-item");
   li.textContent = c.nombre;
   li.addEventListener("click", () => {
-    localStorage.setItem("selectedCategory", JSON.stringify(c));
+    storeCategory(c);
     // limpiar la búsqueda por nombre
     searchInput.value = ""; 
     window.location.reload();
@@ -53,7 +53,7 @@ categorias.forEach((c) => {
 
 // Botón para "Ver todos"
 document.getElementById("ver-todos")?.addEventListener("click", () => {
-  localStorage.removeItem("selectedCategory");
+  clearStoredCategory();
   window.location.reload();
 });
 

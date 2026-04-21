@@ -2,7 +2,7 @@
 
 import type { CartItem, IUser } from "../../types";
 import { logout } from "../../utils/auth";
-import { getUSer } from "../../utils/localStorage";
+import { getUser } from "../../utils/localStorage";
 
 const buttonLogout = document.getElementById(
   "logoutButton"
@@ -14,7 +14,7 @@ buttonLogout?.addEventListener("click", () => {
 // Cargar nombre de usuario al navbar y mostrar link de admin si corresponde
 const navbar = document.getElementById("navbar-links") as HTMLDivElement;
 const userNameElement = document.getElementById("navbar-username") as HTMLSpanElement;
-const usuario: IUser = getUSer() ? JSON.parse(getUSer() as string) : null;
+const usuario: IUser = getUser() ? JSON.parse(getUser() as string) : null;
 
 if (usuario) {
   userNameElement.textContent = usuario.email;

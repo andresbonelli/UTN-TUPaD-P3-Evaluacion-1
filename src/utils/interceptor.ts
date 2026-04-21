@@ -5,12 +5,12 @@
 
 
 import type { IUser } from "../types";
-import { getUSer } from "./localStorage";
+import { getUser } from "./localStorage";
 import { navigate } from "./navigate";
 
 export const interceptarCargaPagina = () => {
     const pathActual = window.location.pathname;
-    const user: IUser = JSON.parse(getUSer() || "null");
+    const user: IUser = JSON.parse(getUser() || "null");
     
     // 1. Si no hay usuario o no esta authenticado: Mandar al login (Ruta desprotegida)
     if (!user || !user.loggedIn) {
