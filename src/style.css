@@ -579,7 +579,11 @@ body.store-body {
   transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
-.btn-add-cart:disabled {
+.btn-add-cart.added {
+  background-color: var(--color-primario);
+}
+
+.btn-add-cart:disabled:not(.added) {
   background-color: #e0e0e0;
   color: #888;
   cursor: default;

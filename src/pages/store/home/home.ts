@@ -24,7 +24,7 @@ const aplicarFiltrosYRenderizarProductos = () => {
     );
   }
 
-  // 3. Actualizar titulo de la grilla de productos con el nombre de la Categoria seleccionada
+  // 3. Actualizar titulo de la grilla de productos con el nombre de la Categoria seleccionada.
   const tituloProductos = document.getElementById("products-title") as HTMLHeadingElement;
   if (tituloProductos) {
     tituloProductos.textContent = categoryFilter?.nombre || "Todos los Productos";
@@ -127,6 +127,18 @@ const renderizarProductos = (productos: Product[]) => {
       actualizarContadorCarrito();
 
       showToast("¡Agregado al carrito!", p.nombre);
+
+      const btn = btnAdd as HTMLButtonElement;
+      const textoOriginal = btn.textContent;
+      btn.textContent = "✓ Agregado";
+      btn.classList.add("added");
+      // evitar repetidos clicks sobre el mismo producto
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = textoOriginal;
+        btn.classList.remove("added");
+        btn.disabled = false;
+      }, 1000);
     });
   });
 };
