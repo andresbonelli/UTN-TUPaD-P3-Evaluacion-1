@@ -7,25 +7,27 @@ const searchInput = document.getElementById("search-input") as HTMLInputElement;
 
 // Filtrado de productos combinando la Categoría guardada en localStorage y la busqueda por nombre
 const aplicarFiltrosYRenderizarProductos = () => {
-  const query = searchInput.value.toLowerCase();
-  const activeCategory = getStoredCategory();
+  const searchQuery = searchInput.value.toLowerCase();
+  const categoryFilter = getStoredCategory();
 
-  // 1. Filtrar por categoría si existe
-  let productosFiltrados = activeCategory 
-    ? PRODUCTS.filter(p => p.categorias.some(cat => cat.id === activeCategory.id))
-    : PRODUCTS;
+  let productosFiltrados: Product[] = PRODUCTS;
+  
+  // 1. Filtrar por categoría
+  if (categoryFilter) {
+    productosFiltrados = PRODUCTS.filter(p => p.categorias.some(cat => cat.id === categoryFilter.id))
+  }
 
   // 2. Filtrar por nombre
-  if (query) {
+  if (searchQuery) {
     productosFiltrados = productosFiltrados.filter(p =>
-      p.nombre.toLowerCase().includes(query)
+      p.nombre.toLowerCase().includes(searchQuery)
     );
   }
 
-  // 3. Actualizar titulo de la grilla de productos
+  // 3. Actualizar titulo de la grilla de productos con el nombre de la Categoria seleccionada
   const tituloProductos = document.getElementById("products-title") as HTMLHeadingElement;
   if (tituloProductos) {
-    tituloProductos.textContent = activeCategory?.nombre || "Todos los Productos";
+    tituloProductos.textContent = categoryFilter?.nombre || "Todos los Productos";
   }
 
   renderizarProductos(productosFiltrados);
